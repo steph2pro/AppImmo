@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:myschoolapp/src/core/theme/app_size.dart';
 import 'package:myschoolapp/src/features/contact/ui/contact_screen.dart';
 import 'package:myschoolapp/src/features/home/ui/home_screen.dart';
 import 'package:myschoolapp/src/features/infrastructure/ui/infrastructure_screen.dart';
-import 'package:myschoolapp/src/features/resultats/ui/resultat_screen.dart';
+import 'package:myschoolapp/src/features/proprietaire/ui/owner_list_screen.dart';
+import 'package:myschoolapp/src/features/seting/ui/settings_screen.dart';
 import 'package:myschoolapp/src/shared/extensions/context_extensions.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 @RoutePage()
 class HomePageScreen extends StatefulWidget {
@@ -17,20 +18,14 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  
-  void _openWhatsApp() async {
-    final Uri url = Uri.parse("https://wa.me/+237671506217"); 
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      throw 'Impossible d\'ouvrir WhatsApp';
-    }
-  }
   int _selectedIndex = 0;
 
-  final List<Widget> _pages =  [
+  final List<Widget> _pages = const [
     HomeScreen(),
-    ResultatScreen(),
-    InfrastructureScreen(),
+    OwnerListScreen(),
+    // InfrastructureScreen(),
     ContactScreen(),
+    SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -41,44 +36,84 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+
     return Scaffold(
       body: _pages[_selectedIndex],
-      floatingActionButton:  _selectedIndex == 3
-    ? FloatingActionButton.extended(
-        backgroundColor: Colors.green[600],
-        onPressed: _openWhatsApp,
-        shape: const StadiumBorder(),
-        icon: const Icon(
-          FontAwesomeIcons.whatsapp,
-          color: Colors.white, size: 32),
-        label: Text(
-          'Discuter avec nous sur Whatsap',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: context.colorScheme.onPrimary),
-        ),
-      )
 
-    :
-      FloatingActionButton(
-        onPressed: _openWhatsApp,
-        backgroundColor: Colors.green[600],
-        child: const Icon(
-          FontAwesomeIcons.whatsapp,
-          color: Colors.white,
+      // 👇 FAB descendu plus bas
+      floatingActionButton: Transform.translate(
+        offset: const Offset(0, 30),
+        child: FloatingActionButton(
+          backgroundColor: colorScheme.primary,
+          onPressed: () {
+            // Action du bouton
+          },
+          shape: const CircleBorder(),
+          child: const Icon(Icons.apps, size: 28, color: Colors.white),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        // selectedItemColor: Colors.teal,
-        backgroundColor: context.colorScheme.tertiary,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
-          BottomNavigationBarItem(icon: Icon(Icons.grade), label: 'Résultats'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Infrastructures'),
-          BottomNavigationBarItem(icon: Icon(Icons.contact_mail), label: 'Contact'),
-        ],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      // 👇 Bottom Navigation avec style
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+          boxShadow: [
+            BoxShadow(color: Colors.black12, blurRadius: 10),
+          ],
+        ),
+        child: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          color: Colors.transparent,
+          notchMargin: 10,
+          elevation: 0,
+          child: SizedBox(
+            height: 70,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(icon: const Icon(Icons.home), index: 0),
+                _buildNavItem(
+                  icon: const FaIcon(FontAwesomeIcons.userTie, size: 22),
+                  index: 1,
+                ),
+                const SizedBox(width: 40), // espace pour le FAB
+                _buildNavItem(icon: const Icon(Icons.chat_bubble_outline), index: 2),
+                _buildNavItem(icon: const Icon(Icons.settings), index: 3),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({required Widget icon, required int index}) {
+    final bool isSelected = _selectedIndex == index;
+    final Color primaryColor = context.colorScheme.primary;
+    final Color tertiaryColor = context.colorScheme.tertiaryContainer;
+
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? tertiaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: IconTheme(
+          data: IconThemeData(
+            color: primaryColor.withOpacity(isSelected ? 1.0 : 0.6),
+            size: 26,
+          ),
+          child: icon,
+        ),
       ),
     );
   }
 }
-

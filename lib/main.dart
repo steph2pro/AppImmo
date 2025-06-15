@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myschoolapp/src/core/routing/app_router.dart';
 import 'package:myschoolapp/src/core/theme/app_theme.dart'; // adapte le chemin selon ton projet
 
 final _appRouter = AppRouter();
 
 void main() {
-  runApp(const MainApp());
+  runApp(
+    const ProviderScope(
+      child: MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {

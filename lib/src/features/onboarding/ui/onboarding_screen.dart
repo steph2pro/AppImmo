@@ -60,18 +60,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children:  [
                 OnboardingItem(
                   imageUrl: 'assets/images/onboarding1.png',
-                  title:  "Bienvenue à School App",
-                  description: 'Une école pour grandir et s’épanouir.'
+                  title:  "Trouvez la maison de vos rêves",
+                  description: 'Trouvez le bien idéal selon vos critères.'
                   ),
                 OnboardingItem(
                   imageUrl: 'assets/images/onboarding2.png',
-                  title:  'Un suivi clair et accessible',
-                  description: 'Toutes les informations scolaires en un seul endroit'
+                  title:  ' Vendez rapidement et facilement',
+                  description: 'Publiez, gérez et concluez rapidement vos ventes.'
                    ),
                 OnboardingItem(
                   imageUrl: 'assets/images/onboarding3.png',
-                  title: 'Une communication simplifiée',
-                  description: 'Parents, enseignants et élèves toujours en lien'
+                  title: 'Louez en toute sérénité',
+                  description: 'Proposez ou trouvez une location en toute simplicité.'
                   ),
               ],
             ),
@@ -124,7 +124,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ]else...[
                         Expanded(child: ElevatedButton(
                      onPressed: (){
-                           context.router.push(const HomeRouteRoute());
+                           context.router.push(const LoginRoute());
 
                             print("object");
                         },

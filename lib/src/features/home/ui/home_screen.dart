@@ -1,253 +1,131 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:myschoolapp/src/core/routing/app_router.dart';
-import 'package:myschoolapp/src/core/theme/app_size.dart';
-import 'package:myschoolapp/src/features/home/models/category_data.dart';
-import 'package:myschoolapp/src/features/home/models/cours_data.dart';
-import 'package:myschoolapp/src/shared/components/forms/input.dart';
-import 'package:myschoolapp/src/shared/components/home_components/categorie.dart';
-import 'package:myschoolapp/src/shared/components/home_components/cours_item.dart';
+import 'package:myschoolapp/src/features/home/ui/widgets/category_selector_widget.dart';
+import 'package:myschoolapp/src/features/home/ui/widgets/header_widget.dart';
+import 'package:myschoolapp/src/features/home/ui/widgets/property_card.dart';
+import 'package:myschoolapp/src/features/home/ui/widgets/property_card_widget.dart';
+import 'package:myschoolapp/src/features/home/ui/widgets/search_filter_widget.dart';
+import 'package:myschoolapp/src/features/home/ui/widgets/section_title_widget.dart';
+import 'package:myschoolapp/src/features/property/logic/providers/property_provider.dart';
+// import 'package:myschoolapp/src/features/property/logic/models/property_provider.dart';
+
 import 'package:myschoolapp/src/shared/extensions/context_extensions.dart';
 
-
-
 @RoutePage()
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-    
-  
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
 
-    final TextEditingController _searshController = TextEditingController();
-   
-  
-
-
+  final List<String> categories = [
+    'assets/images/categorie1.png',
+    'assets/images/categorie2.png',
+    'assets/images/categorie1.png',
+    'assets/images/categorie2.png',
+    'assets/images/categorie1.png',
+    'assets/images/categorie2.png',
+    'assets/images/categorie1.png',
+    'assets/images/categorie2.png',
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final propertyAsync = ref.watch(propertyListProvider);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 0,
-        backgroundColor: context.colorScheme.primary,
-      ),
-      backgroundColor: context.colorScheme.onPrimary,
-      
-      body: Column(
-        children: [
-          Container(
-      padding: EdgeInsets.all(23),
-      width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        color: context.colorScheme.primary, // Fond bleu
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
+        title: const HeaderWidget(
+          username: "James Butler",
+          avatarUrl: "assets/images/profile1.png",
         ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-            'Salut! cher visiteur',
-                style: context.textTheme.bodyLarge?.copyWith(color:context.colorScheme.onPrimary)
-              ),
-              Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.primaryContainer, // Fond bleu avec opacité
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: 
-                    Stack(
-                // clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                      icon: Icon(
-                        Icons.notifications,
-                        color: context.colorScheme.onPrimary,
-                      ),
-                      onPressed: () {},
-                    ),
+      backgroundColor: context.colorScheme.secondaryContainer.withOpacity(0.1),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                const SearchFilterWidget(),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 80,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      CategorySelectorWidget(icons: categories, selectedIndex: 0),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SectionTitleWidget(title: "All Property", onSeeAll: () {}),
+                const SizedBox(height: 12),
 
-                  Positioned(
-                    top: 8,
-                    right: 6,
-                    child: Container(
-                      width: 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: context.colorScheme.error,
-                        shape: BoxShape.circle,
-                      ),
+                // Horizontal Property Cards
+                propertyAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, _) => Center(child: Text('Erreur: $error')),
+                  data: (properties) => SizedBox(
+                    height: 280,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: properties.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            context.pushRoute(PropertyDetailsRoute(property: properties[index]));
+                          },
+                          child: PropertyCardWidget(property: properties[index]),
+                        );
+                        // PropertyCardWidget(property: properties[index]);
+                      },
                     ),
                   ),
-                ],
-              ),                  ),
-              
-            ],
+                ),
+
+                const SizedBox(height: 24),
+                const Text(
+                  "Featured Property",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(height: 12),
+
+                // Vertical Featured Cards
+                propertyAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, _) => Center(child: Text('Erreur: $error')),
+                  data: (properties) => Column(
+                    children: properties
+                        .map((property) 
+                         {
+                          return GestureDetector(
+                            onTap: () {
+                              context.pushRoute(
+                                PropertyDetailsRoute(property: property)
+                              );
+                            },
+                            child: PropertyCard(property: property)
+                          );
+                        })
+                        .toList(),
+                  ),
+                )
+              ],
+            ),
           ),
-          gapH10,
-          Text(
-            'Let start',
-            style: context.textTheme.bodySmall?.copyWith(color:context.colorScheme.onPrimary)
-          ),
-          gapH30,
-          Expanded(
-            child:  Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              
-              Expanded(
-                child: Input(
-                  controller: _searshController,
-                   prefixIcon: Icon(
-                      Icons.search,
-                      color: context.colorScheme.primary,
-                    ),
-                ),
-                ),
-                gapW6,
-              Container(
-                margin: EdgeInsets.only(bottom: 10),
-                width: 49,
-                height: 59,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.sync,
-                    color: context.colorScheme.primary,
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-          )
-        
-
-
-        ],
-      ),
-    ),
-          
-
-
-Padding(
-      padding: EdgeInsets.all(20),
-      child: Column(
-        children: [
-           Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                  'Nos categories',
-                  style: context.textTheme.titleLarge!.copyWith(fontSize: 24)
-                  ),
-                  gapW4,
-                  InkWell(
-                    onTap: (){
-                    }, 
-                    child: Text(
-                      'Voir plus',
-                      style: context.textTheme.bodySmall!.copyWith(fontSize: 14,color: context.colorScheme.surfaceTint)
-                    ),
-                  )
-                ],
-              ),
-              gapH12,
-              
-        ],
-      ),
-    ),
-         
-     SizedBox(
-      height: 110,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: schoolCategoryDatas.length,
-        itemBuilder: (context, index) {
-          final category = schoolCategoryDatas[index];
-          return Categorie(
-            title: category.title,
-            icon: category.icon,
-          );
-           },
-      ),
-    ),
-//profession
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                   'Cours les plus solicite',
-                    style: context.textTheme.titleLarge!.copyWith(fontSize: 24)
-                    ),
-                    gapW4,
-                    InkWell(
-                      onTap: (){
-                      }, 
-                      child: Text(
-                       'Voir plus',
-                        style: context.textTheme.bodySmall!.copyWith(fontSize: 14,color: context.colorScheme.surfaceTint)
-                      ),
-                    )
-                  ],
-                ),
-                ),
-                
-
-          Expanded(
-      child:  
-      SizedBox(
-                width: double.infinity,
-                //
-                 height: 400,
-                child:ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: courses.length,
-                    // padding: const EdgeInsets.symmetric(vertical: 12),
-                    itemBuilder: (context, index) {
-                      final prof = courses[index];
-                      return CoursItem(
-                        title: prof.title,
-                        name: prof.name,
-                        contentImage: prof.contentImage,
-                        profilImage: prof.profilImage,
-                        btnText: prof.btnText,
-                        prise: prof.prise,
-                        btnTap: () {
-                          // Action à exécuter au clic du bouton
-                          print('Bouton ${prof.btnText} cliqué pour ${prof.name}');
-                        },
-                      );
-                    },
-                  ),
-              )
-        )
-        ],
+        ),
       ),
     );
   }
 }
+

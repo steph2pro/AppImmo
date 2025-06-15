@@ -39,10 +39,13 @@ class _SplashScreenState extends State<SplashScreen> {
               // height: 60,
             ),
             gapH16,
-            Text(
-              "Suivez votre ecole en quelque click seulement",
-              style: context.textTheme.titleLarge!.copyWith(fontSize: 18, color: context.colorScheme.secondary ),
-            ),
+            Center(
+              child: Text(
+                "Trouvez la maison de vos reve",
+                style: context.textTheme.titleLarge!.copyWith(fontSize: 18, color: context.colorScheme.secondary ),
+              ),
+            )
+           
           ],
         ),
       ),

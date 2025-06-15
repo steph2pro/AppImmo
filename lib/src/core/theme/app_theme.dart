@@ -154,8 +154,8 @@ class AppTheme {
 
   static TextTheme _buildTextTheme({required ColorScheme colors}) {
      return TextTheme(
-      bodySmall: font.copyWith(color: colors.tertiary, fontWeight: FontWeight.w600, fontSize: 12),
-      bodyLarge: font.copyWith(color: colors.tertiary, fontSize: 14,),
+      bodySmall: font.copyWith(color: colors.tertiary, fontSize: 12),
+      bodyLarge: font.copyWith(color: colors.tertiary, fontWeight: FontWeight.w600, fontSize: 14,),
       bodyMedium: font.copyWith(color: colors.onSurface, fontSize: 14, fontWeight: FontWeight.w100),
       titleLarge: font.copyWith(color: colors.primary, fontWeight: FontWeight.w600, fontSize: 32),
       titleMedium: font.copyWith(color: colors.onSurface, fontWeight: FontWeight.w400, fontSize: 18),
