@@ -1,16 +1,18 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:myschoolapp/src/core/routing/app_router.dart';
 import 'package:myschoolapp/src/core/theme/app_size.dart';
+import 'package:myschoolapp/src/datasource/models/propriete_model.dart';
+import 'package:myschoolapp/src/features/property/logic/models/propriete_response.dart';
 import 'package:myschoolapp/src/features/property/logic/services/whatsapp_service.dart';
 import 'package:myschoolapp/src/shared/extensions/context_extensions.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:myschoolapp/src/features/property/logic/models/property_model.dart';
 
 import 'widgets/propertyImageGallery.dart';
 
 @RoutePage()
 class PropertyDetailsScreen extends StatefulWidget {
-  final PropertyModel property;
+  final ProprieteResponse property;
 
   const PropertyDetailsScreen({super.key, required this.property});
 
@@ -40,36 +42,33 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               gapH8,
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(property.image),
+                child: Image.network(property.propriete.image),
               ),
               gapH12,
               Text("Autres vues",
             style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               gapH8,
               PropertyImageGallery(
-                images: property.imagesUrl,
+                images: property.propriete.imagesVues!,
                 showAll: showAllImages,
                 onToggle: () => setState(() => showAllImages = !showAllImages),
               ),
               gapH12,
-              Text(property.title,
+              Text(property.propriete.titre,
                   style: context.textTheme.titleMedium?.copyWith(fontSize: 20,fontWeight: FontWeight.bold)),
                   gapH10,
               Row(
                 children: [
-                  Text('${property.price} F CFA',
+                  Text('${property.propriete.prix} F CFA',
                       style: context.textTheme.titleMedium?.copyWith(color: context.colorScheme.primary,fontWeight: FontWeight.bold)),
-                  const Spacer(),
-                  Text('(${property.sqft} sqft)',
-                      style: context.textTheme.bodyLarge?.copyWith(color: context.colorScheme.tertiary)  ),
-                ],
+                  ],
               ),
               gapH8,
               Row(
                 children: [
                    Icon(Icons.location_on, size: 16, color: context.colorScheme.onSurface),
                   gapW6,
-                  Text(property.address,style: context.textTheme.bodyLarge?.copyWith(),)
+                  Text(property.propriete.localisation,style: context.textTheme.bodyLarge?.copyWith(),)
                 ],
               ),
               gapH10,
@@ -78,41 +77,75 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               _buildOwnerCard(property),
               gapH16,
               Center(
-                child:
-              Container(
-                padding: const EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: 
-              TextButton.icon(
-              onPressed: () async {
-                try {
-                  await WhatsappService.contactOwner(
-                    phone: property.ownerPhone, // à ajouter dans `PropertyModel`
-                    message: "Bonjour, je suis intéressé par la propriété : ${property.title}",
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Impossible d'ouvrir WhatsApp")),
-                  );
-                }
-              },
-              icon: const FaIcon(
-                FontAwesomeIcons.whatsapp,
-                color: Colors.green,
-                size: 25,
-              ),
-              label: Text("Contacter le propriétaire",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  )),
-              
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Container(
+        padding: const EdgeInsets.all(0),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: TextButton.icon(
+          onPressed: () async {
+            try {
+              await WhatsappService.contactOwner(
+                phone: property.user.contact ?? '',
+                message:
+                    "Bonjour, je suis intéressé par la propriété : ${property.propriete.description}",
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Impossible d'ouvrir WhatsApp")),
+              );
+            }
+          },
+          icon: const FaIcon(
+            FontAwesomeIcons.whatsapp,
+            color: Colors.green,
+            size: 25,
+          ),
+          label: Text(
+            "Contacter",
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
             ),
-              ), 
-              ),
+          ),
+        ),
+      ),
+      const SizedBox(width: 12),
+      Container(
+        padding: const EdgeInsets.all(0),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: TextButton.icon(
+          onPressed: () {
+            // Navigation vers la page de réservation
+            context.pushRoute(
+              ReservationRoute(propriete: property.propriete),
+            );
+          },
+          icon: const Icon(
+            Icons.calendar_month,
+            color: Colors.blue,
+            size: 25,
+          ),
+          label: Text(
+            "Réserver",
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: context.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+
 
               gapH16,
               // _buildExpandableTile("Amenities"),
@@ -142,12 +175,12 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     );
   }
 
-  Widget _buildTagsRow(PropertyModel property) {
+  Widget _buildTagsRow(ProprieteResponse property) {
     return Row(
       children: [
-       _buildTag(FontAwesomeIcons.bed, '${property.bedrooms} chambre(s)'),
-      _buildTag(FontAwesomeIcons.bath, '${property.bathrooms} salle(s) de bain'),
-      _buildTag(FontAwesomeIcons.kitchenSet, '${property.kitchens} cuisine(s)'),
+       _buildTag(FontAwesomeIcons.bed, '${property.propriete.nbrChambre} chambre(s)'),
+      _buildTag(FontAwesomeIcons.bath, '${property.propriete.nbrSalleBain} salle(s) de bain'),
+      _buildTag(FontAwesomeIcons.kitchenSet, '${property.propriete.nbrCuisine} cuisine(s)'),
 
       ],
     );
@@ -166,7 +199,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     );
   }
 
-  Widget _buildOwnerCard(PropertyModel property) {
+  Widget _buildOwnerCard(ProprieteResponse property) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -179,7 +212,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
           ClipRRect(
           borderRadius: BorderRadius.circular(14), // 👈 coins arrondis de 14
           child: Image.network(
-            "https://th.bing.com/th/id/OIP.sC5gWwVXXiQnXtGV2bR8JwHaHa?pid=ImgDet&w=474&h=474&rs=1&cb=idpwebpc1",
+            property.user.profil!,
             width: 50, // même taille que le diameter du CircleAvatar (2 * 28)
             height: 50,
             fit: BoxFit.cover,
@@ -190,18 +223,18 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(property.ownerName,
+                Text(property.user.nom,
                     style:  context.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
                 gapH6,
-                Text(property.ownerRole,
+                Text(property.user.role!,
                     style:  context.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold)),
                 gapH8,
-                Text(property.description,
+                Text(property.propriete.description,
                     style: context.textTheme.bodyMedium?.copyWith(color: context.colorScheme.onSurface.withOpacity(0.7))),
                 gapH8,
                 Row(
                   children: List.generate(
-                    property.rating.floor(),
+                    4,
                     (index) =>
                         const Icon(Icons.star, size: 16, color: Colors.orange),
                   ),

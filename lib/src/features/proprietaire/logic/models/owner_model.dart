@@ -1,17 +1,18 @@
-import 'package:myschoolapp/src/features/property/logic/models/property_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:myschoolapp/src/datasource/models/propriete_model.dart';
+import 'package:myschoolapp/src/datasource/models/user_model.dart';
+import 'package:myschoolapp/src/features/property/logic/models/propriete_response.dart';
 
-class OwnerModel {
-  final String name;
-  final String email;
-  final String avatarUrl;
-  final String ownerPhone;
-  final List<PropertyModel> properties;
+part 'owner_model.freezed.dart';
+part 'owner_model.g.dart';
 
-  OwnerModel({
-    required this.name,
-    required this.email,
-    required this.avatarUrl,
-    required this.properties,
-    required this.ownerPhone,
-  });
+@freezed
+class OwnerModel with _$OwnerModel {
+  factory OwnerModel({
+    required UserModel user,
+    @Default([]) List<ProprieteResponse> proprietes,
+  }) = _OwnerModel;
+
+  factory OwnerModel.fromJson(Map<String, dynamic> json) =>
+      _$OwnerModelFromJson(json);
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:myschoolapp/src/core/theme/app_size.dart';
+import 'package:myschoolapp/src/datasource/models/propriete_model.dart';
 import 'package:myschoolapp/src/features/property/logic/models/property_model.dart';
+import 'package:myschoolapp/src/features/property/logic/models/propriete_response.dart';
 // import 'package:myschoolapp/src/features/home/models/property_model.dart';
 
 class PropertyCard extends StatelessWidget {
-  final PropertyModel property;
+  final ProprieteModel property;
 
   const PropertyCard({super.key, required this.property});
 
@@ -42,28 +45,30 @@ class PropertyCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Title & Price
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
                     Text(
-                      property.title,
+                      property.titre,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    gapH4,
                     Text(
-                      "\$${property.price}",
+                      "${property.prix} CFA",
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,
                       ),
                     ),
-                  ],
-                ),
+                //   ],
+                // ),
 
-                const SizedBox(height: 4),
+                gapH4,  
 
                 // Location
                 Row(
@@ -72,7 +77,7 @@ class PropertyCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        property.location,
+                        property.localisation,
                         style: const TextStyle(fontSize: 12, color: Colors.grey),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -85,13 +90,13 @@ class PropertyCard extends StatelessWidget {
                 // Specs
                 Row(
                  children: [
-                  _buildIconWithText(Icons.square_foot, '${property.area}sqft'),
+                  // _buildIconWithText(Icons.square_foot, '${property.area}sqft'),
                   const SizedBox(width: 10),
-                  _buildIconWithText(Icons.bed, '${property.bedrooms}'),
+                  _buildIconWithText(Icons.bed, '${property.nbrChambre}'),
                   const SizedBox(width: 10),
-                  _buildIconWithText(Icons.bathtub, '${property.bathrooms}'),
+                  _buildIconWithText(Icons.bathtub, '${property.nbrSalleBain}'),
                   const SizedBox(width: 10),
-                  _buildIconWithText(Icons.restaurant_menu, '${property.kitchens}'),
+                  _buildIconWithText(Icons.restaurant_menu, '${property.nbrCuisine}'),
                 ],
                 ),
               ],

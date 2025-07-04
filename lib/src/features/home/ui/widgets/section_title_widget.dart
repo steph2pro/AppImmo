@@ -13,7 +13,7 @@ class SectionTitleWidget extends StatelessWidget {
       children: [
         Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         const Spacer(),
-        GestureDetector(onTap: onSeeAll, child: const Text("See All >", style: TextStyle(color: Colors.blue))),
+        GestureDetector(onTap: onSeeAll, child: const Text("Voir tout >", style: TextStyle(color: Colors.blue))),
       ],
     );
   }

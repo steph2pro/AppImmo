@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    ContactRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ContactScreen(),
+      );
+    },
     HomeRouteRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -51,6 +57,18 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const OwnerListScreen(),
       );
     },
+    PhoneNumberRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const PhoneNumberScreen(),
+      );
+    },
+    ProductRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ProductScreen(),
+      );
+    },
     PropertiesOwnerRoute.name: (routeData) {
       final args = routeData.argsAs<PropertiesOwnerRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -71,10 +89,26 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    ProprieteFormRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ProprieteFormScreen(),
+      );
+    },
     RegisterRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const RegisterScreen(),
+      );
+    },
+    ReservationRoute.name: (routeData) {
+      final args = routeData.argsAs<ReservationRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ReservationScreen(
+          key: args.key,
+          propriete: args.propriete,
+        ),
       );
     },
     SettingsRoute.name: (routeData) {
@@ -90,6 +124,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [ContactScreen]
+class ContactRoute extends PageRouteInfo<void> {
+  const ContactRoute({List<PageRouteInfo>? children})
+      : super(
+          ContactRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ContactRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -177,6 +225,34 @@ class OwnerListRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [PhoneNumberScreen]
+class PhoneNumberRoute extends PageRouteInfo<void> {
+  const PhoneNumberRoute({List<PageRouteInfo>? children})
+      : super(
+          PhoneNumberRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'PhoneNumberRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ProductScreen]
+class ProductRoute extends PageRouteInfo<void> {
+  const ProductRoute({List<PageRouteInfo>? children})
+      : super(
+          ProductRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ProductRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [PropertiesOwnerScreen]
 class PropertiesOwnerRoute extends PageRouteInfo<PropertiesOwnerRouteArgs> {
   PropertiesOwnerRoute({
@@ -219,7 +295,7 @@ class PropertiesOwnerRouteArgs {
 class PropertyDetailsRoute extends PageRouteInfo<PropertyDetailsRouteArgs> {
   PropertyDetailsRoute({
     Key? key,
-    required PropertyModel property,
+    required ProprieteResponse property,
     List<PageRouteInfo>? children,
   }) : super(
           PropertyDetailsRoute.name,
@@ -244,12 +320,26 @@ class PropertyDetailsRouteArgs {
 
   final Key? key;
 
-  final PropertyModel property;
+  final ProprieteResponse property;
 
   @override
   String toString() {
     return 'PropertyDetailsRouteArgs{key: $key, property: $property}';
   }
+}
+
+/// generated route for
+/// [ProprieteFormScreen]
+class ProprieteFormRoute extends PageRouteInfo<void> {
+  const ProprieteFormRoute({List<PageRouteInfo>? children})
+      : super(
+          ProprieteFormRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ProprieteFormRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -264,6 +354,44 @@ class RegisterRoute extends PageRouteInfo<void> {
   static const String name = 'RegisterRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ReservationScreen]
+class ReservationRoute extends PageRouteInfo<ReservationRouteArgs> {
+  ReservationRoute({
+    Key? key,
+    required ProprieteModel propriete,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ReservationRoute.name,
+          args: ReservationRouteArgs(
+            key: key,
+            propriete: propriete,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'ReservationRoute';
+
+  static const PageInfo<ReservationRouteArgs> page =
+      PageInfo<ReservationRouteArgs>(name);
+}
+
+class ReservationRouteArgs {
+  const ReservationRouteArgs({
+    this.key,
+    required this.propriete,
+  });
+
+  final Key? key;
+
+  final ProprieteModel propriete;
+
+  @override
+  String toString() {
+    return 'ReservationRouteArgs{key: $key, propriete: $propriete}';
+  }
 }
 
 /// generated route for

@@ -1,37 +1,37 @@
-// lib/src/features/home/services/property_service.dart
-
-import 'dart:async';
-import '../models/property_model.dart';
+import 'package:myschoolapp/src/features/property/logic/models/propriete_response.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:myschoolapp/src/datasource/models/propriete_model.dart';
+import 'package:myschoolapp/src/datasource/models/user_model.dart';
 
 class PropertyService {
-  Future<List<PropertyModel>> fetchProperties() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simule un appel réseau
-    return List.generate(5, (index) {
-      return PropertyModel(
-        title: "Appartement #$index",
-        location: "NY, New York",
-        price: 267000,
-        area: 2000,
-        bedrooms: 4,
-        bathrooms: 3,
-        kitchens: 1,
-        image: "https://th.bing.com/th/id/R.5270394d2817b966c7ba81a73bc60ec7?rik=0LHTP4vwUCD7UA&pid=ImgRaw&r=0",
-        address: "123 Main Street",
-        sqft: 1800,
-        ownerName: "James Butler",
-        ownerRole: "Propriétaire",
-        description: "Très bel appartement dans un quartier calme.",
-        rating: 4.5,
-        imagesUrl: [
-          "https://th.bing.com/th/id/R.5270394d2817b966c7ba81a73bc60ec7?rik=0LHTP4vwUCD7UA&pid=ImgRaw&r=0",
-          "https://th.bing.com/th/id/R.5270394d2817b966c7ba81a73bc60ec7?rik=0LHTP4vwUCD7UA&pid=ImgRaw&r=0",
-          "https://th.bing.com/th/id/R.5270394d2817b966c7ba81a73bc60ec7?rik=0LHTP4vwUCD7UA&pid=ImgRaw&r=0",
-          "https://th.bing.com/th/id/R.5270394d2817b966c7ba81a73bc60ec7?rik=0LHTP4vwUCD7UA&pid=ImgRaw&r=0",
-          "https://th.bing.com/th/id/R.5270394d2817b966c7ba81a73bc60ec7?rik=0LHTP4vwUCD7UA&pid=ImgRaw&r=0",
-          "https://th.bing.com/th/id/R.5270394d2817b966c7ba81a73bc60ec7?rik=0LHTP4vwUCD7UA&pid=ImgRaw&r=0",
-        ],
-        ownerPhone: "+1234567890",
-      );
-    });
+  final SupabaseClient _client = Supabase.instance.client;
+
+  Future<List<ProprieteResponse>> fetchProperties() async {
+    try {
+      final response = await _client
+          .from('Propriete')
+          .select('*, user:User(*)'); // jointure utilisateur
+
+      if (response == null || response.isEmpty) return [];
+
+      final properties = response.map<ProprieteResponse>((item) {
+        final map = Map<String, dynamic>.from(item);
+
+        // Séparer les données Propriete et User
+        final proprieteJson = Map<String, dynamic>.from(map)
+          ..remove('user');
+        final userJson = Map<String, dynamic>.from(map['user']);
+
+        return ProprieteResponse(
+          propriete: ProprieteModel.fromJson(proprieteJson),
+          user: UserModel.fromJson(userJson),
+        );
+      }).toList();
+
+      return properties;
+    } catch (e) {
+      print('Erreur lors de la récupération des propriétés : $e');
+      return [];
+    }
   }
 }

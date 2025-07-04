@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/owner_model.dart';
+import 'package:myschoolapp/src/features/proprietaire/logic/models/owner_model.dart';
 import '../services/owner_service.dart';
 
 final ownerServiceProvider = Provider((ref) => OwnerService());

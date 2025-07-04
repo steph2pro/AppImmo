@@ -15,35 +15,35 @@ class ContactForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final fullNameController = TextEditingController();
     final emailController = TextEditingController();
-    final phoneController = TextEditingController();
+    final objetController = TextEditingController();
     final messageController = TextEditingController();
 
     return Column(
       children: [
         const SizedBox(height: 24),
 
-        _buildTextField(
-          context: context,
-          controller: fullNameController,
-          hintText: 'Nom complet',
-          icon: Icons.person_outline,
-          color: Colors.deepOrangeAccent,
-        ),
+        // _buildTextField(
+        //   context: context,
+        //   controller: fullNameController,
+        //   hintText: 'Nom complet',
+        //   icon: Icons.person_outline,
+        //   color: Colors.deepOrangeAccent,
+        // ),
+        // const SizedBox(height: 16),
+
+        // _buildTextField(
+        //   context: context,
+        //   controller: emailController,
+        //   hintText: ' Addresse Email',
+        //   icon: Icons.email_outlined,
+        //   color: Colors.green,
+        // ),
         const SizedBox(height: 16),
 
         _buildTextField(
           context: context,
-          controller: emailController,
-          hintText: ' Addresse Email',
-          icon: Icons.email_outlined,
-          color: Colors.green,
-        ),
-        const SizedBox(height: 16),
-
-        _buildTextField(
-          context: context,
-          controller: phoneController,
-          hintText: 'Numero de telephone',
+          controller: objetController,
+          hintText: 'Objet de la requete',
           icon: Icons.lock_outline,
           color: Colors.purple,
         ),
@@ -69,7 +69,7 @@ class ContactForm extends StatelessWidget {
               onSend(
                 fullName: fullNameController.text,
                 email: emailController.text,
-                phone: phoneController.text,
+                phone: objetController.text,
                 message: messageController.text,
               );
             },

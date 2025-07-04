@@ -7,7 +7,6 @@ import 'package:myschoolapp/src/features/property/logic/services/whatsapp_servic
 import 'package:myschoolapp/src/features/proprietaire/logic/models/owner_model.dart';
 import 'package:myschoolapp/src/shared/extensions/context_extensions.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:myschoolapp/src/features/property/logic/models/property_model.dart';
 
 
 @RoutePage()
@@ -44,7 +43,7 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
                   ClipRRect(
                   borderRadius: BorderRadius.circular(14), // 👈 coins arrondis de 14
                   child: Image.network(
-                    owner.avatarUrl,
+                    owner.user.profil!,
                     width: 56, // même taille que le diameter du CircleAvatar (2 * 28)
                     height: 56,
                     fit: BoxFit.cover,
@@ -56,13 +55,13 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(owner.name,
+                        Text(owner.user.nom,
                             style: context.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             )),
                             // gapH4,
-                        Text(owner.email,style:  context.textTheme.bodyLarge?.copyWith(
+                        Text(owner.user.email,style:  context.textTheme.bodyLarge?.copyWith(
                           color:context.colorScheme.tertiary.withOpacity(0.6))),
                             gapH4,
                       
@@ -88,12 +87,25 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
                 color: Colors.deepPurple,
                 label: "Rendez-vous",
               ),
-              _buildActionContainer(
-                width: screenWidth * 0.30,
+               _buildActionContainer(
+                width: screenWidth * 0.50,
                 icon: FontAwesomeIcons.whatsapp,
                 color: Colors.green,
                 label: "Contacte",
-              ),
+               onTap:  () async {
+                    try {
+                      await WhatsappService.contactOwner(
+                        phone: owner.user.contact, // à ajouter dans `ownerModel`
+                        message: "Bonjour,Mr/Mme ${owner.user.nom} je suis interesser par vos Biens",
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Impossible d'ouvrir WhatsApp")),
+                      );
+                    }
+                  }
+              )
+              
             ],
           ),
           gapH12,
@@ -101,7 +113,7 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
             style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               gapH8,
               Column(
-                    children: owner.properties
+                    children: owner.proprietes
                         .map((property)  {
                           return GestureDetector(
                             onTap: () {
@@ -109,7 +121,7 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
                                 PropertyDetailsRoute(property: property)
                               );
                             },
-                            child: PropertyCard(property: property)
+                            child: PropertyCard(property: property.propriete)
                           );
                         }
                         )
@@ -130,7 +142,7 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
           child:  Icon(Icons.arrow_back_ios, color: context.colorScheme.onSurface,),
         ),
         gapW10,
-         Text("Property owner",
+         Text("Bien(s) du  Proprietaires",
             style: context.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
         const Spacer(),
          Container(
@@ -161,9 +173,15 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
     required IconData icon,
     required Color color,
     required String label,
+    VoidCallback? onTap,
   }) {
     return Expanded(
-      child: Container(
+      child: 
+      InkWell(
+        onTap: onTap,
+        child: 
+      
+      Container(
         height: 100,
         margin: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
@@ -183,7 +201,8 @@ class _PropertiesOwnerScreenState extends State<PropertiesOwnerScreen> {
           ],
         ),
       ),
-    ));
+    ))
+    );
   }
 
 }

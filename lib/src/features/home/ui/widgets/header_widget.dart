@@ -23,7 +23,7 @@ class HeaderWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
              Text(
-              "Hello!", 
+              "Bienvenue!", 
               style:  context.textTheme.titleSmall?.copyWith(fontSize: 16,color: context.colorScheme.onSurface )),
             gapW10,
             Text(username, 
@@ -31,9 +31,10 @@ class HeaderWidget extends StatelessWidget {
             ),
           ],
         ),
+
         
         CircleAvatar(backgroundImage: 
-        AssetImage(avatarUrl),
+        NetworkImage(avatarUrl),
          radius: 25),
         // CircleAvatar(backgroundImage: NetworkImage(avatarUrl), radius: 20),
       ],

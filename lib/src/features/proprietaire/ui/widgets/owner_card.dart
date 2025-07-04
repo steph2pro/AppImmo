@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:myschoolapp/src/core/theme/app_size.dart';
+import 'package:myschoolapp/src/features/proprietaire/logic/models/owner_model.dart';
 import 'package:myschoolapp/src/shared/extensions/context_extensions.dart';
 import 'package:myschoolapp/src/features/property/logic/services/whatsapp_service.dart';
-import '../../logic/models/owner_model.dart';
+import '../../logic/models/owner_model1.dart';
 
 class OwnerCard extends StatelessWidget {
   final OwnerModel owner;
@@ -24,7 +25,7 @@ class OwnerCard extends StatelessWidget {
             ClipRRect(
             borderRadius: BorderRadius.circular(14), // 👈 coins arrondis de 14
             child: Image.network(
-              owner.avatarUrl,
+              owner.user.profil!,
               width: 56, // même taille que le diameter du CircleAvatar (2 * 28)
               height: 56,
               fit: BoxFit.cover,
@@ -36,13 +37,13 @@ class OwnerCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(owner.name,
+                  Text(owner.user.nom,
                       style: context.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       )),
                       gapH4,
-                  Text(owner.email,style:  context.textTheme.bodyLarge?.copyWith(
+                  Text(owner.user.email,style:  context.textTheme.bodyLarge?.copyWith(
                     color:context.colorScheme.tertiary.withOpacity(0.6))),
                       gapH4,
                  
@@ -67,8 +68,8 @@ class OwnerCard extends StatelessWidget {
                    onPressed: () async {
                     try {
                       await WhatsappService.contactOwner(
-                        phone: owner.ownerPhone, // à ajouter dans `ownerModel`
-                        message: "Bonjour, je suis intéressé par la propriété : ${owner.name}",
+                        phone: owner.user.contact, // à ajouter dans `ownerModel`
+                        message: "Bonjour, ${owner.user.nom}",
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,25 +82,34 @@ class OwnerCard extends StatelessWidget {
           ],
         ), 
         gapH20,
+        // Parcours de toutes les images des propriétés
         SizedBox(
-                    height: 80,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: owner.properties.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 6),
-                      itemBuilder: (context, index) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            owner.properties[index].image,
-                            width: 100,
-                            height: 80,
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      },
-                    ),
-                  )
+          height: 80,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: owner.proprietes
+                .expand((p) => p.propriete.imagesVues ?? [])
+                .length,
+            separatorBuilder: (_, __) => const SizedBox(width: 6),
+            itemBuilder: (context, index) {
+              // Récupère toutes les images dans une seule liste à plat
+              final allImages = owner.proprietes
+                  .expand((p) => p.propriete.imagesVues ?? [])
+                  .toList();
+
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  allImages[index],
+                  width: 100,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported),
+                ),
+              );
+            },
+          ),
+        ),
           ],
         )
       ),

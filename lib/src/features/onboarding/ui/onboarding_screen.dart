@@ -35,10 +35,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           alignment: Alignment.topLeft,
           child: TextButton(
                     onPressed: (){
-                      context.router.push(const HomeRouteRoute());
+                      context.router.push(const LoginRoute());
                     }, 
                     child: Text(
-                      'Skip',
+                      'Passer',
                       style: context.textTheme.bodySmall!.copyWith(fontSize: 16,color: context.colorScheme.primary )
                     ),
                   )
@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     SizedBox(
                       width: 100,
                       child:  TextButton(
-                        child: Text('Back'),
+                        child: Text('Retour'),
                         onPressed: () {
                            if (_currentIndex != 0) {
                             _controller.previousPage(
@@ -111,7 +111,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         SizedBox(
                       width:   110 ,
                       child:  Button.primary(
-                        title:  'Next',
+                        title:  'Suivant',
                         onPressed: (){
                             _controller.nextPage(
                                 duration: const Duration(milliseconds: 500),
@@ -139,7 +139,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 8),
-                            child: Text('Get started'),
+                            child: Text('Commencer'),
                           ),
                         ))
                     ],
